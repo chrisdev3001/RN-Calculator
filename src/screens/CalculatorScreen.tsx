@@ -1,11 +1,23 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { View, Text} from 'react-native'
 import ButtonCalculator from '../components/ButtonCalculator'
 import { styles } from '../theme/appTheme'
 
+enum Operators {
+  plus, minus, mult, div
+}
+
 export const CalculatorScreen = () => {
-  const [prevNumber, setPrevNumber] = useState('0')
+  const [prevNumber, setPrevNumber] = useState('')
   const [number, setNumber] = useState('100')
+
+  // We dont need to re render the comnponent...
+  const lastOperationRef = useRef<Operators>()
+
+  const cleanPrevNumbers = () => {
+    setNumber('0')
+    setPrevNumber('')
+  }
 
   const buildNumber = (textNumber: string) => {
     // Do not accept double dot
@@ -65,6 +77,40 @@ export const CalculatorScreen = () => {
     }
   }
 
+  const changePrevNumber = () => {
+    let finalNumber = number
+    if(number.endsWith('.')){
+      finalNumber = number.slice(0, -1)
+    }
+
+    setPrevNumber(finalNumber)
+    setNumber('0')
+  }
+
+  // We dont need to re render the comnponent...
+  const btnPlus = () => {
+    changePrevNumber()
+    lastOperationRef.current = Operators.plus
+  }
+
+  // We dont need to re render the comnponent...
+  const btnMinus = () => {
+    changePrevNumber()
+    lastOperationRef.current = Operators.minus
+  }
+
+  // We dont need to re render the comnponent...
+  const btnMult = () => {
+    changePrevNumber()
+    lastOperationRef.current = Operators.mult
+  }
+
+  // We dont need to re render the comnponent...
+  const btnDiv = () => {
+    changePrevNumber()
+    lastOperationRef.current = Operators.div
+  }
+
   return (
     <View style={styles.calculatorContainer}>
       <Text style={styles.smallResult}>{prevNumber}</Text>
@@ -77,31 +123,31 @@ export const CalculatorScreen = () => {
       </Text>
 
       <View style={styles.row}>
-        <ButtonCalculator text="C" color="#9B9B9B" action={() => setNumber('0')} />
+        <ButtonCalculator text="C" color="#9B9B9B" action={cleanPrevNumbers} />
         <ButtonCalculator text="+/-" color="#9B9B9B" action={positiveNegative} />
         <ButtonCalculator text="del" color="#9B9B9B" action={deleteLastNumber} />
-        <ButtonCalculator text="/" color="#FF9427" action={() => setNumber('0')} />
+        <ButtonCalculator text="/" color="#FF9427" action={btnDiv} />
       </View>
 
       <View style={styles.row}>
         <ButtonCalculator text="7" action={buildNumber} />
         <ButtonCalculator text="8" action={buildNumber} />
         <ButtonCalculator text="9" action={buildNumber} />
-        <ButtonCalculator text="X" color="#FF9427" action={buildNumber} />
+        <ButtonCalculator text="X" color="#FF9427" action={btnMult} />
       </View>
 
       <View style={styles.row}>
         <ButtonCalculator text="4" action={buildNumber} />
         <ButtonCalculator text="5" action={buildNumber} />
         <ButtonCalculator text="6" action={buildNumber} />
-        <ButtonCalculator text="-" color="#FF9427" action={buildNumber} />
+        <ButtonCalculator text="-" color="#FF9427" action={btnMinus} />
       </View>
 
       <View style={styles.row}>
         <ButtonCalculator text="1" action={buildNumber} />
         <ButtonCalculator text="2" action={buildNumber} />
         <ButtonCalculator text="3" action={buildNumber} />
-        <ButtonCalculator text="+" color="#FF9427" action={() => setNumber('0')} />
+        <ButtonCalculator text="+" color="#FF9427" action={btnPlus} />
       </View>
 
       <View style={styles.row}>
