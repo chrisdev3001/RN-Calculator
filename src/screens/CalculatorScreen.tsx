@@ -8,7 +8,61 @@ export const CalculatorScreen = () => {
   const [number, setNumber] = useState('100')
 
   const buildNumber = (textNumber: string) => {
-    setNumber(number + textNumber)
+    // Do not accept double dot
+    if(number.includes('.') && textNumber === '.') return
+
+    if(number.startsWith('0') || number.startsWith('-0')){
+      // Decimal dot
+      if(textNumber === '.'){
+        setNumber(number + textNumber)
+      }
+      
+      // Check if is another cero and there is dot
+      else if(textNumber === '0' && number.includes('.')){
+        setNumber(number + textNumber)
+      }
+
+      // Check if is not equals to cero and it hasn't dot
+      else if(textNumber !== '0' && !number.includes('.')){
+        setNumber(textNumber)
+      }
+
+      // Prevent 0000.0
+      else if(textNumber === '0' && !number.includes('.')){
+        setNumber(number)
+      }
+
+      else{
+        setNumber(number + textNumber)
+      }
+
+    }else{
+      setNumber(number + textNumber)
+    }
+  }
+
+  const positiveNegative = () => {
+    if(number.includes('-')){
+      setNumber(number.replace('-', ''))
+    }else{
+      setNumber('-' + number)
+    }
+  }
+
+  const deleteLastNumber = () => {
+    let negative = ''
+    let tempNumber = number
+
+    if(number.includes('-')){
+      negative = '-'
+      tempNumber = number.substr(1)
+    }
+
+    if(tempNumber.length > 1){
+      setNumber(negative + tempNumber.slice(0, -1))
+    }else{
+      setNumber('0')
+    }
   }
 
   return (
@@ -24,8 +78,8 @@ export const CalculatorScreen = () => {
 
       <View style={styles.row}>
         <ButtonCalculator text="C" color="#9B9B9B" action={() => setNumber('0')} />
-        <ButtonCalculator text="+/-" color="#9B9B9B" action={() => setNumber('0')} />
-        <ButtonCalculator text="del" color="#9B9B9B" action={() => setNumber('0')} />
+        <ButtonCalculator text="+/-" color="#9B9B9B" action={positiveNegative} />
+        <ButtonCalculator text="del" color="#9B9B9B" action={deleteLastNumber} />
         <ButtonCalculator text="/" color="#FF9427" action={() => setNumber('0')} />
       </View>
 
