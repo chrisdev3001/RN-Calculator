@@ -111,6 +111,31 @@ export const CalculatorScreen = () => {
     lastOperationRef.current = Operators.div
   }
 
+  const calculate = () => {
+    const num1 = Number(number)
+    const num2 = Number(prevNumber)
+
+    switch (lastOperationRef.current) {
+      case Operators.plus:
+        setNumber(`${num1 + num2}`)        
+        break;
+
+      case Operators.minus:
+        setNumber(`${num2 - num1}`)        
+        break;
+
+      case Operators.mult:
+        setNumber(`${num1 * num2}`)       
+        break;
+
+      case Operators.div:
+        setNumber(`${num2 / num1}`)       
+        break;
+    }
+
+    setPrevNumber('0')
+  }
+
   return (
     <View style={styles.calculatorContainer}>
       <Text style={styles.smallResult}>{prevNumber}</Text>
@@ -153,7 +178,7 @@ export const CalculatorScreen = () => {
       <View style={styles.row}>
         <ButtonCalculator text="0" ancho={true} action={buildNumber} />
         <ButtonCalculator text="." action={buildNumber} />
-        <ButtonCalculator text="=" color="#FF9427" action={() => setNumber('0')} />
+        <ButtonCalculator text="=" color="#FF9427" action={calculate} />
       </View>
     </View>
   )
